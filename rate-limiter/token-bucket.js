@@ -29,7 +29,7 @@ class RateLimiter {
 
   request() {
     if (this._consume()) console.log(`REQUEST FULFILLED - ${this.bucket.length} requests remain.`);
-    else console.log('REQUEST REJECTED');
+    else console.log('REQUEST DROPPED');
   }
 }
 
