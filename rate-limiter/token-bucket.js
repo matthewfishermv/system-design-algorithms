@@ -1,34 +1,36 @@
-const MAX_SIZE = 5;
+class RateLimiter {
+  constructor(BUCKET_SIZE, REFILL_INTERVAL_SECONDS) {
+    this.BUCKET_SIZE = BUCKET_SIZE;
+    this.REFILL_INTERVAL_SECONDS = REFILL_INTERVAL_SECONDS;
+    this.bucket = [];
 
-let bucket = [];
+    this._initFill();
+  }
 
-function fill() {
-  if (bucket.length >= MAX_SIZE) return bucket;
-  else {
-    bucket.push('t');
-    return bucket;
+  _fill() {
+    if (this.bucket.length < this.BUCKET_SIZE) this.bucket.push('t');
+  }
+
+  _initFill() {
+    setTimeout(() => {
+      this._fill(this.bucket);
+      this._initFill();
+    }, this.REFILL_INTERVAL_SECONDS * 1000);
+  }
+
+  _consume() {
+    if (this.bucket.length > 0) {
+      this.bucket.shift();
+      return true;
+    }
+
+    return false;
+  }
+
+  request() {
+    if (this._consume()) console.log(`REQUEST FULFILLED - ${this.bucket.length} requests remain.`);
+    else console.log('REQUEST REJECTED');
   }
 }
 
-function consume() {
-  if (bucket.length > 0) {
-    bucket.shift();
-    return true;
-  } else return false;
-}
-
-function request() {
-  if (bucket.length > 0) {
-    consume(bucket);
-    console.log(`REQUEST FULFILLED - ${bucket.length} requests remain.`);
-  } else console.log('REQUEST REJECTED');
-}
-
-function fillInitiator() {
-  setTimeout(() => {
-    fill(bucket);
-    fillInitiator();
-  }, 1000);
-}
-
-fillInitiator();
+const rateLimiter = new RateLimiter(5, 5);
