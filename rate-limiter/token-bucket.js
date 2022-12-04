@@ -13,7 +13,7 @@ class RateLimiter {
 
   _initFill() {
     setTimeout(() => {
-      this._fill(this.bucket);
+      this._fill();
       this._initFill();
     }, this.REFILL_INTERVAL_SECONDS * 1000);
   }
